@@ -86,7 +86,7 @@ def main():
         out = name+".p2p"
     
     if args.country:
-        url = "https://lite.ip2location.com/"+args.country+"-ip-address-ranges"
+        url = "https://lite.ip2location.com/"+args.country.lower()+"-ip-address-ranges"
         write(out, scrape(url, name, args.verbose), args.verbose)
     else:
         write(out, read(args.input, name, args.verbose), args.verbose)
