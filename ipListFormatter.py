@@ -36,11 +36,22 @@ def scrape(country, name, verbose):
             print("Parsing html")
         soup = BeautifulSoup(html, 'html.parser')
         dl = soup.find('tbody')
+        count = 0
         for line in dl(re.compile('tr')):
             outl = re.sub(r'\<(.*?)\>', " ", str(line)).split()
             if verbose:
                 print("Outl: " + str(outl))
+            try:
+                count += int(outl[2].replace(",", ""))
+            except:
+                if verbose:
+                    print("Not a number")
+                pass
             output.append(name+":"+outl[0] + "-" + outl[1])
+        if verbose:
+            print("Total IPs: " + str(count))
+        output.append("# Total IPs: " + str(count))
+        exit(0)
         return output
     except Exception as e:
         print(e)
@@ -52,17 +63,24 @@ def read(fileName, name, verbose):
         output = []
         lines = f.readlines()
         n = 0
+        count = 0
         for line in lines:
             if verbose:
                 n += 1
                 print("Line #" + str(n) + ": " + line)
-            splitLine = line.split("    ")
-            splitLine = splitLine[0].split("\t")
+            splitLine = line.split()
             if verbose:
                 print("Split line: " + str(splitLine))
-            ip1 = splitLine[0]
-            ip2 = splitLine[1]
-            output.append(name+":"+ip1 + "-" + ip2)
+            try:
+                count += int(splitLine[2].replace(",", ""))
+            except:
+                if verbose:
+                    print("Not a number")
+                pass
+            output.append(name+":"+splitLine[0] + "-" + splitLine[1])
+        if verbose:
+            print("Total IPs: " + str(count))
+        output.append("# Total IPs: " + str(count))
         f.close()
         return output
     except Exception as e:
@@ -77,6 +95,10 @@ def write(fileName, ipList, verbose):
             if verbose:
                 print("Writing: " + ip)
             f.write(ip + "\n")
+        if args.country:
+            f.write("# List scraped from "+f"https://lite.ip2location.com/{args.country.lower()}-ip-address-ranges")
+        f.write("# Scraper/Formatter by Dean Sabbah\n")
+        f.write("# https://github.com/DeanSabbah/ipListFormatter")
         f.close()
     except Exception as e:
         print(e)
@@ -94,7 +116,7 @@ def main():
         out = name+".p2p"
     
     # I don't really need to pass the arguments in the function call but it
-    # makes it easier to handle missing arguments.
+    # makes it easier to handle optinal arguments.
     if args.country:
         write(out, scrape(args.country, name, args.verbose), args.verbose)
     else:
