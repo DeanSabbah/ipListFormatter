@@ -24,6 +24,6 @@ Example (inIPs.txt):</br>
 100.100.0.0 100.100.0.255 random text</br>
 101.100.3.6 105.100.0.0 <-anything after this whitespcae will be discarded
 
-Output:</be>
+Output:</br>
 (name):100.100.0.0-100.100.0.255</br>
 (name):101.100.3.6 105.100.0.0
