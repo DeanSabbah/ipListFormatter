@@ -74,16 +74,19 @@ def write(fileName, ipList, verbose):
         f.write(ip + "\n")
     f.close()
         
-def main():    
+def main():
+    if not args.country and not args.input:
+        print("Please provide an input file or a country to scrape.")
+        exit(1)
     name = args.name
     if not name:
         name = "IP"
     out = args.output
     if not out:
         out = name+".p2p"
-    url = "https://lite.ip2location.com/"+args.country+"-ip-address-ranges"
     
     if args.country:
+        url = "https://lite.ip2location.com/"+args.country+"-ip-address-ranges"
         write(out, scrape(url, name, args.verbose), args.verbose)
     else:
         write(out, read(args.input, name, args.verbose), args.verbose)
