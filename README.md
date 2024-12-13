@@ -1,6 +1,6 @@
 # Ip List Formatter
 
-A small script that I wrote to get the Ip list for certain countries from lite.ip2location.com in a format that works with PeerBlock.
+A small script that I wrote to scrape the Ip list for certain countries from lite.ip2location.com in a format that works with PeerBlock.
 
 ### Usage
 #### Args:
