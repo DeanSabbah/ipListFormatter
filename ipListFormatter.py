@@ -13,8 +13,9 @@ parser.add_argument("-v", "--verbose", help="Verbose output", action="store_true
 parser.add_argument("-c", "--country", help="Coutry's URL to scrape.")
 args = parser.parse_args()
 
-def scrape(url, name, verbose):
+def scrape(country, name, verbose):
     try:
+        url = f"https://lite.ip2location.com/{args.country.lower()}-ip-address-ranges"
         options = Options()
         options.add_argument("--headless")
         output = []
@@ -46,37 +47,44 @@ def scrape(url, name, verbose):
         exit(1)
 
 def read(fileName, name, verbose):
-    f = open(fileName, "r")
-    output = []
-    lines = f.readlines()
-    n = 0
-    for line in lines:
-        if verbose:
-            n += 1
-            print("Line #" + str(n) + ": " + line)
-        splitLine = line.split("    ")
-        splitLine = splitLine[0].split("\t")
-        if verbose:
-            print("Split line: " + str(splitLine))
-        ip1 = splitLine[0]
-        ip2 = splitLine[1]
-        output.append(name+":"+ip1 + "-" + ip2)
-    f.close()
-    return output
+    try:
+        f = open(fileName, "r")
+        output = []
+        lines = f.readlines()
+        n = 0
+        for line in lines:
+            if verbose:
+                n += 1
+                print("Line #" + str(n) + ": " + line)
+            splitLine = line.split("    ")
+            splitLine = splitLine[0].split("\t")
+            if verbose:
+                print("Split line: " + str(splitLine))
+            ip1 = splitLine[0]
+            ip2 = splitLine[1]
+            output.append(name+":"+ip1 + "-" + ip2)
+        f.close()
+        return output
+    except Exception as e:
+        print(e)
+        exit(1)
 
 
-###
 def write(fileName, ipList, verbose):
-    f = open(fileName, "w")
-    for ip in ipList:
-        if verbose:
-            print("Writing: " + ip)
-        f.write(ip + "\n")
-    f.close()
+    try:
+        f = open(fileName, "w")
+        for ip in ipList:
+            if verbose:
+                print("Writing: " + ip)
+            f.write(ip + "\n")
+        f.close()
+    except Exception as e:
+        print(e)
+        exit(1)
         
 def main():
     if not args.country and not args.input:
-        print("Please provide an input file or a country to scrape.")
+        print("Please provide an input file or a country name to scrape.")
         exit(1)
     name = args.name
     if not name:
@@ -85,9 +93,10 @@ def main():
     if not out:
         out = name+".p2p"
     
+    # I don't really need to pass the arguments in the function call but it
+    # makes it easier to handle missing arguments.
     if args.country:
-        url = "https://lite.ip2location.com/"+args.country.lower()+"-ip-address-ranges"
-        write(out, scrape(url, name, args.verbose), args.verbose)
+        write(out, scrape(args.country, name, args.verbose), args.verbose)
     else:
         write(out, read(args.input, name, args.verbose), args.verbose)
     
