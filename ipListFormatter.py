@@ -15,7 +15,7 @@ args = parser.parse_args()
 
 def scrape(country, name, verbose):
     try:
-        url = f"https://lite.ip2location.com/{args.country.lower()}-ip-address-ranges"
+        url = f"https://lite.ip2location.com/{country.lower()}-ip-address-ranges"
         options = Options()
         options.add_argument("--headless")
         output = []
@@ -23,11 +23,8 @@ def scrape(country, name, verbose):
         driver = webdriver.Chrome(options)
         if verbose:
             print("Getting URL: " + url)
-        driver.get(url)
-        
-        if verbose:
             print("Waiting for page to load")
-        driver.implicitly_wait(15)
+        driver.get(url)
         
         html = driver.page_source
         driver.quit()
@@ -39,6 +36,9 @@ def scrape(country, name, verbose):
         count = 0
         for line in dl(re.compile('tr')):
             outl = re.sub(r'\<(.*?)\>', " ", str(line)).split()
+            if "Loading" in outl[0]:
+                print("Error getting page. Try again later.")
+                exit(1)
             if verbose:
                 print("Outl: " + str(outl))
             try:
