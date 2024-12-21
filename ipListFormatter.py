@@ -1,4 +1,4 @@
-import re, argparse
+import re, argparse, traceback
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -13,7 +13,9 @@ parser.add_argument("-v", "--verbose", help="Verbose output", action="store_true
 parser.add_argument("-c", "--country", help="Coutry's URL to scrape.")
 args = parser.parse_args()
 
-def scrape(country, name, verbose):
+verbose:bool = args.verbose
+
+def scrape(country:str, name:str) -> list[str]:
     try:
         url = f"https://lite.ip2location.com/{country.lower()}-ip-address-ranges"
         options = Options()
@@ -51,13 +53,12 @@ def scrape(country, name, verbose):
         if verbose:
             print("Total IPs: " + str(count))
         output.append("# Total IPs: " + str(count))
-        exit(0)
         return output
-    except Exception as e:
-        print(e)
+    except Exception:
+        print(traceback.format_exc())
         exit(1)
 
-def read(fileName, name, verbose):
+def read(fileName:str, name:str) -> list[str]:
     try:
         f = open(fileName, "r")
         output = []
@@ -83,44 +84,46 @@ def read(fileName, name, verbose):
         output.append("# Total IPs: " + str(count))
         f.close()
         return output
-    except Exception as e:
-        print(e)
+    except Exception:
+        print(traceback.format_exc())
         exit(1)
 
 
-def write(fileName, ipList, verbose):
+def write(fileName:str, ipList:list[str]) -> None:
     try:
         f = open(fileName, "w")
+        f.write("#"*86+"\n")
+        if args.country:
+            f.write("#"f"{f'List scraped from https://lite.ip2location.com/{args.country.lower()}-ip-address-ranges':^84}""#\n")
+        f.write(f"#"f"{'Scraper/Formatter by Dean Sabbah':^84}""#\n")
+        f.write("#"f"{'https://github.com/DeanSabbah/ipListFormatter':^84}""#\n")
+        f.write("#"*86+"\n")
         for ip in ipList:
             if verbose:
                 print("Writing: " + ip)
             f.write(ip + "\n")
-        if args.country:
-            f.write("# List scraped from "+f"https://lite.ip2location.com/{args.country.lower()}-ip-address-ranges")
-        f.write("# Scraper/Formatter by Dean Sabbah\n")
-        f.write("# https://github.com/DeanSabbah/ipListFormatter")
         f.close()
-    except Exception as e:
-        print(e)
+    except Exception:
+        print(traceback.format_exc())
         exit(1)
         
 def main():
     if not args.country and not args.input:
         print("Please provide an input file or a country name to scrape.")
         exit(1)
-    name = args.name
+    name:str = args.name
     if not name:
         name = "IP"
-    out = args.output
+    out:str = args.output
     if not out:
         out = name+".p2p"
     
     # I don't really need to pass the arguments in the function call but it
     # makes it easier to handle optinal arguments.
     if args.country:
-        write(out, scrape(args.country, name, args.verbose), args.verbose)
+        write(out, scrape(args.country, name))
     else:
-        write(out, read(args.input, name, args.verbose), args.verbose)
+        write(out, read(args.input, name))
     
 if __name__ == "__main__":
     main()
