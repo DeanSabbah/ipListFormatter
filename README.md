@@ -13,7 +13,7 @@ A small script that I wrote to scrape the Ip list for certain countries from lit
 | **Optional options**                           |                                                                                        |                |
 | -n,                            --name          | Name of the IP list. Will apear before every ip in the list                            | IP             |
 | -o,                            --output        | Name of the output file (Include the file extention (I.E. outFile.txt))                | == to name.p2p |
-| -v,                            --vervose       | Prints what the program is doing                                                       |                |
+| -v,                            --verbose       | Prints what the program is doing                                                       |                |
 | -r,                            --rolling-count | Uses third number in formatted input text to count the number of IPs added to the list |                |
 
 Example:</br>
