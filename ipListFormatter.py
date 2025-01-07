@@ -6,11 +6,12 @@ from selenium.webdriver.chrome.options import Options
 parser = argparse.ArgumentParser(
     prog="ipListFormatter",
     description="Format IP ranges from a list")
-parser.add_argument("-i", "--input", help="Input file")
-parser.add_argument("-o", "--output", help="Output file name (include extension)")
-parser.add_argument("-n", "--name", help="Name of the IP range")
+parser.add_argument("-i", "--input", help="Input file", type=str)
+parser.add_argument("-c", "--country", help="Coutry's URL to scrape.", type=str)
+parser.add_argument("-o", "--output", help="Output file name (include extension)", type=str)
+parser.add_argument("-n", "--name", help="Name of the IP range", type=str)
 parser.add_argument("-v", "--verbose", help="Verbose output", action="store_true")
-parser.add_argument("-c", "--country", help="Coutry's URL to scrape.")
+parser.add_argument("-r", "--rolling-count", help="Uses a rolling count to keep track of the total IPs", action="store_true")
 args = parser.parse_args()
 
 verbose:bool = args.verbose
@@ -43,16 +44,18 @@ def scrape(country:str, name:str) -> list[str]:
                 exit(1)
             if verbose:
                 print("Outl: " + str(outl))
-            try:
-                count += int(outl[2].replace(",", ""))
-            except:
-                if verbose:
-                    print("Not a number")
-                pass
+            if args.rolling_count:
+                try:
+                    count += int(outl[2].replace(",", ""))
+                except:
+                    if verbose:
+                        print("Not a number")
+                    pass
             output.append(name+":"+outl[0] + "-" + outl[1])
-        if verbose:
-            print("Total IPs: " + str(count))
-        output.append("# Total IPs: " + str(count))
+        if args.rolling_count:
+            if verbose:
+                print("Total IPs: " + str(count))
+            output.append("# Total IPs: " + str(count))
         return output
     except Exception:
         print(traceback.format_exc())
@@ -72,16 +75,18 @@ def read(fileName:str, name:str) -> list[str]:
             splitLine = line.split()
             if verbose:
                 print("Split line: " + str(splitLine))
-            try:
-                count += int(splitLine[2].replace(",", ""))
-            except:
-                if verbose:
-                    print("Not a number")
-                pass
+            if args.rolling_count:
+                try:
+                    count += int(splitLine[2].replace(",", ""))
+                except:
+                    if verbose:
+                        print("Not a number")
+                    pass
             output.append(name+":"+splitLine[0] + "-" + splitLine[1])
-        if verbose:
-            print("Total IPs: " + str(count))
-        output.append("# Total IPs: " + str(count))
+        if args.rolling_count:
+            if verbose:
+                print("Total IPs: " + str(count))
+            output.append("# Total IPs: " + str(count))
         f.close()
         return output
     except Exception:
@@ -94,9 +99,9 @@ def write(fileName:str, ipList:list[str]) -> None:
         f = open(fileName, "w")
         f.write("#"*86+"\n")
         if args.country:
-            f.write("#"f"{f'List scraped from https://lite.ip2location.com/{args.country.lower()}-ip-address-ranges':^84}""#\n")
-        f.write(f"#"f"{'Scraper/Formatter by Dean Sabbah':^84}""#\n")
-        f.write("#"f"{'https://github.com/DeanSabbah/ipListFormatter':^84}""#\n")
+            f.write(f"#{'List scraped from https://lite.ip2location.com/'+args.country.lower()+'-ip-address-ranges':^84}#\n")
+        f.write(f"#{'Scraper/Formatter by Dean Sabbah':^84}#\n")
+        f.write(f"#{'https://github.com/DeanSabbah/ipListFormatter':^84}#\n")
         f.write("#"*86+"\n")
         for ip in ipList:
             if verbose:

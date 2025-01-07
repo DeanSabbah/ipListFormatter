@@ -6,14 +6,15 @@ A small script that I wrote to scrape the Ip list for certain countries from lit
 
 #### Args:
 
-| Required options (Choose one)            | Description                                                                      | Default Value  |
-|------------------------------------------|----------------------------------------------------------------------------------|----------------|
-| -i,                            --input   | input file (Do not use if specifying a country)                                  |                |
-| -c,                            --country | Name of country to scrape IPs for (Do not use with input, this will override it) |                |
-| **Optional options**                     |                                                                                  |                |
-| -n,                            --name    | Name of the IP list. Will apear before every ip in the list                      | IP             |
-| -o,                            --output  | Name of the output file (Include the file extention (I.E. outFile.txt))          | == to name.p2p |
-| -v,                            --vervose | Prints what the program is doing                                                 |                |
+| Required options (Choose one)                  | Description                                                                            | Default Value  |
+|------------------------------------------------|----------------------------------------------------------------------------------------|----------------|
+| -i,                            --input         | input file (Do not use if specifying a country)                                        |                |
+| -c,                            --country       | Name of country to scrape IPs for (Do not use with input, this will override it)       |                |
+| **Optional options**                           |                                                                                        |                |
+| -n,                            --name          | Name of the IP list. Will apear before every ip in the list                            | IP             |
+| -o,                            --output        | Name of the output file (Include the file extention (I.E. outFile.txt))                | == to name.p2p |
+| -v,                            --vervose       | Prints what the program is doing                                                       |                |
+| -r,                            --rolling-count | Uses third number in formatted input text to count the number of IPs added to the list |                |
 
 Example:</br>
 python3 ipListFormatter.py -c Canada -n "Canada IP List" -o CanadaList.txt
