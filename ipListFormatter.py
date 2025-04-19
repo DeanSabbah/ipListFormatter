@@ -7,7 +7,7 @@ parser = argparse.ArgumentParser(
     prog="ipListFormatter",
     description="Format IP ranges from a list")
 parser.add_argument("-i", "--input", help="Input file", type=str)
-parser.add_argument("-c", "--country", help="Coutry's URL to scrape.", type=str)
+parser.add_argument("-c", "--country", help="Country's URL to scrape.", type=str)
 parser.add_argument("-o", "--output", help="Output file name (include extension)", type=str)
 parser.add_argument("-n", "--name", help="Name of the IP range", type=str)
 parser.add_argument("-v", "--verbose", help="Verbose output", action="store_true")
